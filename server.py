@@ -2,7 +2,9 @@ import threading, time, requests, json
 import ast
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from reciever.recv_user_info_from_history import check_is_user_is_last, get_all_user_data_from_history
+from notifications.telegram_bot.send_notification import send_telegram_notification
+from reciever.recv_user_info_from_history import check_is_user_is_last, check_user_in_history, get_all_user_data_from_history, get_last_action_data, get_user_last_action_info
+from sender.send_to_notifications import send_email_notification
 from sender.send_to_time_service import send_data_to_time_service
 from remover.remove_data_timer_serivce import remove_timer
 from sender.send_user_info_to_history import send_user_data_to_history
@@ -19,7 +21,9 @@ from sender.send_user_info_to_history import send_user_data_to_history
 # save previoss best bet (id)
 # is auto is enabl
 # true = create new timer and creat new timr (step 1) and del old
+
 # false do nothin
+
 # new winner notify hes cool
 # notify last winnder he sucks
 
@@ -67,36 +71,12 @@ def reciever():
 
 # check is user auto
 @app.route("/add_seller_to_session", methods=["POST"])
-def reciever():
+def recievrr():
     if request.method == "POST":
         recieved = request.json
         
         
-        # recieved format: {"auto_status": auto_status, "begin_time": begin_time, "seller_id": seller_id, "session_id": session_id, 'new_price': price, 'input_type': auto/manual, 'min_price_config': min_price}
-            
-
-            # if recieved['auto_status'] == True:
-            # if recieved['input_type'] == 'auto':
-            #     if not recieved['new_price'] < checker['info']['min_price']:
-                    
-            #         data_to_send = {}
-            #         data_to_send[recieved["seller_id"], recieved["session_id"]] = {"time": recieved["begin_time"], "duration": recieved["duration"]}
-            #         # send data format: str [{(seller id, session_id): {"time": time, "duration": duration}}, ...]
-            #         send_data_to_time_service(str(list(data_to_send)))
-            #     else:
-            #         return jsonify('MIN PRICE ERROR')
-
-            # else:
-            #     if not check_is_user_is_last(seller_id=recieved["seller_id"], session_id=recieved["session_id"]):
-            #         if recieved['auto_status'] == True:
-                        
-            #             remove_this = {"seller_id": recieved["seller_id"], "session_id": recieved["session_id"]}
-            #             requests.post(config['time_service_ip'] + '/remove_timer', json=remove_this)
-                
-            #     else:
-            #         return jsonify('IS LAST USER ERROR')
-
-        
+        print('\n\n\n', recieved, recieved['input_type'], '\n\n\n')
         if recieved['input_type'] == 'auto':
             if not recieved['new_price'] < recieved['min_price_config']:
                 
@@ -116,11 +96,35 @@ def reciever():
             else:
                 return jsonify('IS LAST USER ERROR')
 
+        save_previous_winner = get_last_action_data()
+
+        print('\n\n\n pr ', save_previous_winner, '\n\n\n')
+
+        send_telegram_notification(user_id=506629389, text=" Ставка перебита!")
+        send_email_notification(send_data={'address': 'igmalysch@yandex.ru', 'message_text': ' Ставка перебита', 'subject': 'Ставка перебита'})
+
         send_user_data_to_history(seller_id=recieved["seller_id"],session_id=recieved["seller_id"],min_price=recieved['min_price_config'],auto_status=recieved['auto_status'],curr_price=recieved['new_price'])
         
 
+        # create timer if auto  = create new timer and creat new timr (step 1) and del old 
+        if recieved['input_type'] == 'manual':
+            data = [{(recieved["seller_id"], recieved["seller_id"]): {"time": time.time(), "duration": recieved["duration"]}}]
+            send_data_to_time_service(data)
+
+
+
         # print('\n got smth ',recieved)
         return jsonify(str(recieved))
+
+
+@app.route("/downgrade_price", methods=["POST"])
+def low_pric():
+    if request.method == "POST":
+        # {"seller_id": , "session_id": }
+        recieved = request.json
+        # get last element pric
+        data = get_user_last_action_info(seller_id=recieved["seller_id"], session_id=recieved["session_id"])
+        send_user_data_to_history(data["current_price"] - data["current_price"] * 100/5)
 
 
 @app.errorhandler(500)

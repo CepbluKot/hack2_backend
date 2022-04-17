@@ -15,6 +15,19 @@ for selected_action in parse:
     time_in_seconds = time.mktime(parsed_time.timetuple())
     
 
+beg = time.time()
+
+lola = {"auto_status": True, "begin_time": beg, "seller_id": 0, "session_id": 0, 'new_price': 1395, 'input_type': 'auto', 'min_price_config': 10, 'duration': 10}
+
+lolb = {"auto_status": True, "begin_time": beg, "seller_id": 0, "session_id": 0, 'new_price': 1380, 'input_type': 'auto', 'min_price_config': 10, 'duration': 10}
+
+lolc = {"auto_status": True, "begin_time": beg, "seller_id": 0, "session_id": 0, 'new_price': 1375, 'input_type': 'auto', 'min_price_config': 10, 'duration': 10}
+
+print('try')
+requests.post('http://192.168.227.137:65520/add_seller_to_session', json=lola)
+requests.post('http://192.168.227.137:65520/add_seller_to_session', json=lolb)
+requests.post('http://192.168.227.137:65520/add_seller_to_session', json=lolc)
+print('done')
 
 # infa = {
 #         "id": 2,

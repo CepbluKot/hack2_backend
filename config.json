@@ -1,3 +1,8 @@
 {
-    "time_service_ip": "http://192.168.59.137:65530"
+    "time_service_ip": "http://192.168.227.137:65530",
+    "telegram_bot_token": "5344177195:AAHPROrMvJpDeKf60ESi05VPJ4FQQ1OKFIE",
+    "email_port": 465,
+    "email_password": "mktnkxzvbswsqjvg",
+    "post_server_address": "smtp.yandex.com",
+    "my_email": "igmalysch@yandex.ru"
 }

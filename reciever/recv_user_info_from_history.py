@@ -25,7 +25,7 @@ def get_all_user_data_from_history():
 
         all_data.append({"auto_status": auto_status, "begin_time": begin_time, "seller_id": seller_id, "session_id": session_id, "min_price_config": min_price_config, "current_price": current_price})
 
-    return all_data
+    return all_data[::-1]
         
 
 # print('\n ', selected_action['info']["auto_status"], selected_action['info']['session']['id'])
@@ -56,8 +56,8 @@ def check_is_user_is_last(seller_id: int, session_id: int):
     return False
 
 
-def get_user_last_action_info():
-    data = check_user_in_history()
+def get_user_last_action_info(seller_id: int, session_id: int):
+    data = check_user_in_history(seller_id=seller_id, session_id=session_id)
     if data:
         last_id = data['id']
         change_cnt = data['change_cnt']
@@ -71,5 +71,11 @@ def get_user_last_action_info():
         final_price = data['info']['session']['final_price']
         reducing_factor = data['info']['session']['reducing_factor']
         auto_status = data['info']['auto_status']
+        current_price = data['current_price']
 
-        return last_id, change_cnt, password, date_joined, seller_name, session_name, start_time, end_time, start_price, final_price, reducing_factor, auto_status
+        return {"last_id": last_id, "change_cnt": change_cnt, "password": password, "date_joined": date_joined, "seller_name": seller_name, "session_name": session_name, "start_time": start_time, "end_time": end_time, "start_price": start_price, "final_price": final_price, "reducing_factor": reducing_factor, "auto_status": auto_status, "current_price": current_price}
+
+
+def get_last_action_data():
+    data = get_all_user_data_from_history()
+    return data[0]

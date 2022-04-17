@@ -9,7 +9,7 @@ from mail.send import send_email
 app = Flask(__name__)
 
 
-port = 65520
+port = 65510
 url = "http://localhost:" + str(port)
 cors = CORS(app, resources={r"/*": {"origins": url}})
 
@@ -30,6 +30,7 @@ def telegram_notify():
 
 @app.route("/send_email_notification", methods=["POST"])
 def email_notify():
+    # [{"address": address, "message_text": text, "subject": text}, ...]
     if request.method == "POST":
         recieved = request.json
         for selected_element in recieved:
