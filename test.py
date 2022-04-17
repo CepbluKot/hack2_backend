@@ -11,14 +11,9 @@ for selected_action in parse:
     selected_time = selected_action['time']
     selected_time = selected_time.replace("T", "-")
     selected_time = selected_time.replace("Z", "")
-
     parsed_time = datetime.strptime(selected_time, '%Y-%m-%d-%H:%M:%S.%f')
     time_in_seconds = time.mktime(parsed_time.timetuple())
     
-
-    # print(timez.)
-    # print(selected_action['time'])
-    # print('\n ', , selected_action['info']['seller']['seller'], selected_action['info']['session']['id'])
 
 
 # infa = {

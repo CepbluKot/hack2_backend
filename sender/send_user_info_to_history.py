@@ -58,4 +58,5 @@ def send_user_data_to_history(seller_id: int, session_id: int, min_price, auto_s
     }
 
     
+
     return False

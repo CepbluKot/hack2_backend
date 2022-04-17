@@ -14,6 +14,8 @@ from sender.send_user_info_to_history import send_user_data_to_history
 
 # hes new price set to new price
 # send to histori
+
+
 # save previoss best bet (id)
 # is auto is enabl
 # true = create new timer and creat new timr (step 1) and del old
